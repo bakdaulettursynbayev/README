@@ -3,14 +3,17 @@ import random
 
 pygame.init()
 
+# Определение размеров и частоты кадров
 W, H = 1200, 800
 FPS = 60
 
+# Создание окна и настройка параметров
 screen = pygame.display.set_mode((W, H), pygame.RESIZABLE)
 clock = pygame.time.Clock()
 done = False
 bg = (0, 0, 0)
 
+# Настройка параметров платформы и мяча
 paddleW = 150
 paddleH = 25
 paddleSpeed = 20
@@ -22,22 +25,26 @@ ball_rect = int(ballRadius * 2 ** 0.5)
 ball = pygame.Rect(random.randrange(ball_rect, W - ball_rect), H // 2, ball_rect, ball_rect)
 dx, dy = 1, -1
 
+# Параметры игры и текстовые элементы
 game_score = 0
 game_score_fonts = pygame.font.SysFont('comicsansms', 40)
 game_score_text = game_score_fonts.render(f'Your game score is: {game_score}', True, (0, 0, 0))
 game_score_rect = game_score_text.get_rect()
 game_score_rect.center = (210, 20)
 
-collision_sound = pygame.mixer.Sound('media/catch.mp3')
+# Звуковые эффекты
+collision_sound = pygame.mixer.Sound("/Users/bakdaulettursunbaev/Desktop/README/Lab8/media/catch.mp3")
 
+# Периодические интервалы и изменения
 time_elapsed = 0
-speed_increase_interval = 1000 
-speed_increase_amount = 0.2 
-shrink_paddle_interval = 5000 
+speed_increase_interval = 1000
+speed_increase_amount = 0.2
+shrink_paddle_interval = 5000
 shrink_paddle_amount = 10
 
-
+# Функция для обнаружения столкновений
 def detect_collision(dx, dy, ball, rect):
+    # Определяем различные сценарии столкновений и изменяем направление мяча
     if dx > 0:
         delta_x = ball.right - rect.left
     else:
@@ -55,14 +62,14 @@ def detect_collision(dx, dy, ball, rect):
         dx = -dx
     return dx, dy
 
-
+# Генерация списка блоков и их цветов
 block_list = [pygame.Rect(10 + 120 * i, 50 + 70 * j,
                           100, 50) for i in range(10) for j in range(4)]
 color_list = [(random.randrange(0, 255),
                random.randrange(0, 255), random.randrange(0, 255))
               for i in range(10) for j in range(4)]
 
-
+# Создание неразрушаемых блоков
 unbreakable_block_list = []
 for _ in range(5):  
     random_index = random.randint(0, len(block_list) - 1)
@@ -70,6 +77,7 @@ for _ in range(5):
 
 unbreakable_color_list = [(0, 0, 255) for _ in range(len(unbreakable_block_list))]
 
+# Создание бонусных блоков с различными эффектами
 bonus_brick_types = {
     "longer_paddle": {"color": (0, 255, 0), "perk": "paddle", "message": "Longer paddle!"},
     "increase_speed": {"color": (255, 165, 0), "perk": "speed", "message": "Speed Up!"},
@@ -81,6 +89,7 @@ for _ in range(5):
     bonus_brick_type = random.choice(list(bonus_brick_types.keys()))
     bonus_brick_list.append((block_list.pop(random_index), bonus_brick_type))
 
+# Создание текстовых элементов для победы и поражения
 losefont = pygame.font.SysFont('comicsansms', 40)
 losetext = losefont.render('Game Over', True, (255, 255, 255))
 losetextRect = losetext.get_rect()
@@ -95,6 +104,7 @@ message_font = pygame.font.SysFont('comicsansms', 40)
 last_message = ""
 last_message_rect = None 
 
+# Основной игровой цикл
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -102,6 +112,7 @@ while not done:
 
     screen.fill(bg)
 
+    # Отрисовка блоков и элементов на экране
     [pygame.draw.rect(screen, color_list[color], block) for color, block in enumerate(block_list)]  
     [pygame.draw.rect(screen, (0, 0, 255), block) for block in unbreakable_block_list] 
 
@@ -111,6 +122,7 @@ while not done:
     ball.x += ballSpeed * dx
     ball.y += ballSpeed * dy
 
+    # Обработка столкновений и изменения направления мяча
     if ball.centerx < ballRadius or ball.centerx > W - ballRadius:
         dx = -dx
     if ball.centery < ballRadius + 50:
@@ -127,10 +139,12 @@ while not done:
         game_score += 1
         collision_sound.play()
 
+    # Обработка столкновений с неразрушаемыми блоками
     for i, unbreakable_block in enumerate(unbreakable_block_list):
         if ball.colliderect(unbreakable_block):
             dx, dy = detect_collision(dx, dy, ball, unbreakable_block)
 
+    # Обработка бонусных блоков
     for block, bonus_type in bonus_brick_list:
         pygame.draw.rect(screen, bonus_brick_types[bonus_type]["color"], block)
 
@@ -139,7 +153,7 @@ while not done:
             if bonus_brick_types[bonus_type]["perk"] == "life":
                 pass
             elif bonus_brick_types[bonus_type]["perk"] == "speed":
-                ballSpeed += 2 
+                ballSpeed += 1 
 
             last_message = bonus_brick_types[bonus_type]["message"]
             last_message_surface = message_font.render(last_message, True, (255, 255, 255))
@@ -152,9 +166,11 @@ while not done:
     if last_message:
         screen.blit(last_message_surface, last_message_rect)
 
+    # Отображение текущего счета игры
     game_score_text = game_score_fonts.render(f'Your game score is: {game_score}', True, (255, 255, 255))
     screen.blit(game_score_text, game_score_rect)
 
+    # Проверка условий поражения или победы
     if ball.bottom > H:
         screen.fill((0, 0, 0))
         screen.blit(losetext, losetextRect)
@@ -162,6 +178,7 @@ while not done:
         screen.fill((255, 255, 255))
         screen.blit(wintext, wintextRect)
 
+    # Увеличение скорости и уменьшение размера платформы с течением времени
     time_elapsed += clock.get_rawtime()
     if time_elapsed >= speed_increase_interval:
         ballSpeed += speed_increase_amount
@@ -174,6 +191,7 @@ while not done:
         paddle.width = paddleW
         time_elapsed = 0
 
+    # Управление платформой
     key = pygame.key.get_pressed()
     if key[pygame.K_LEFT] and paddle.left > 0:
         paddle.left -= paddleSpeed

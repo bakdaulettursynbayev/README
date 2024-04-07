@@ -28,7 +28,7 @@ def draw_menu(color):
     pygame.draw.circle(screen, color, (400, 35), 30)
     pygame.draw.circle(screen, 'dark gray', (400, 35), 30, 3)
 
-    eraser = pygame.image.load("media/Eraser.png")
+    eraser = pygame.image.load("/Users/bakdaulettursunbaev/Desktop/README/Lab8/media/Eraser.png")
     eraser_rect = eraser.get_rect(topleft=(WIDTH - 190, 10))
     eraser_rect.width = eraser_rect.height = 35
     screen.blit(eraser, [WIDTH - 190, 10, 25, 25])

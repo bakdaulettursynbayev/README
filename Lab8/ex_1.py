@@ -7,6 +7,7 @@ from pygame.locals import *
 
 pygame.init()
 
+# Определение основных констант и переменных
 FPS = 60
 FramePerSec = pygame.time.Clock()
 
@@ -22,20 +23,24 @@ SPEED = 5
 SCORE = 0
 COIN_SCORE = 0
 
+# Создание шрифтов для текстовых элементов
 font = pygame.font.SysFont("Verdana", 60)
 font_small = pygame.font.SysFont("Verdana", 20)
 game_over = font.render("Game Over", True, WHITE)
 
-background = pygame.image.load("media/AnimatedStreet.png")
+# Загрузка фонового изображения
+background = pygame.image.load("/Users/bakdaulettursunbaev/Desktop/README/Lab8/media/AnimatedStreet.png")
 
+# Создание окна игры
 DISPLAYSURF = pygame.display.set_mode((400, 600))
 pygame.display.set_caption("Game")
 
+# Определение классов игровых объектов
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("media/Enemy.png")
+        self.image = pygame.image.load("/Users/bakdaulettursunbaev/Desktop/README/Lab8/media/Enemy.png")
         self.rect = self.image.get_rect()
         self.rect.center = (random.randint(20, SCREEN_WIDTH - 20), 0)
 
@@ -47,11 +52,10 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
 
-
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("media/Car.png")
+        self.image = pygame.image.load("/Users/bakdaulettursunbaev/Desktop/README/Lab8/media/Car.png")
         self.rect = self.image.get_rect()
         self.rect.center = (160, 520)
 
@@ -71,11 +75,10 @@ class Player(pygame.sprite.Sprite):
             return True
         return False
 
-
 class Coin(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("media/Coin.png")
+        self.image = pygame.image.load("/Users/bakdaulettursunbaev/Desktop/README/Lab8/media/Coin.png")
         self.rect = self.image.get_rect()
         self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
 
@@ -85,11 +88,12 @@ class Coin(pygame.sprite.Sprite):
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
 
-
+# Создание экземпляров игровых объектов
 P1 = Player()
 E1 = Enemy()
 C1 = Coin()
 
+# Группировка объектов
 enemies = pygame.sprite.Group()
 enemies.add(E1)
 coins = pygame.sprite.Group()
@@ -99,9 +103,11 @@ all_sprites.add(P1)
 all_sprites.add(E1)
 all_sprites.add(C1)
 
+# Установка события для увеличения скорости
 INC_SPEED = pygame.USEREVENT + 1
 pygame.time.set_timer(INC_SPEED, 1000)
 
+# Основной игровой цикл
 while True:
 
     for event in pygame.event.get():
@@ -111,16 +117,19 @@ while True:
             pygame.quit()
             sys.exit()
 
+    # Отрисовка фона и текстовых элементов
     DISPLAYSURF.blit(background, (0, 0))
     scores = font_small.render(str(SCORE), True, BLACK)
     coin_scores = font_small.render(str(COIN_SCORE), True, BLACK)
     DISPLAYSURF.blit(scores, (10, 10))
     DISPLAYSURF.blit(coin_scores, (375, 10))
 
+    # Обработка движения и столкновений объектов
     for entity in all_sprites:
         DISPLAYSURF.blit(entity.image, entity.rect)
         entity.move()
 
+    # Проверка на сбор монеты и столкновение с врагом
     if P1.collect_coin(coins):
         COIN_SCORE += 1
         new_coin = Coin()
