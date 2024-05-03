@@ -2,19 +2,19 @@ import pygame
 import time
 import random
 
-pygame.init()
+pygame.init()  # Инициализация Pygame.
 
 # Определение цветов
-white = (255, 255, 255)
-yellow = (255, 255, 102)
-black = (0, 0, 0)
-red = (213, 50, 80)
-green = (0, 255, 0)
-blue = (50, 153, 213)
+white = (255, 255, 255) # Белый цвет
+yellow = (255, 255, 102) # Желтый цвет
+black = (0, 0, 0) # Черный цвет
+red = (213, 50, 80) # Красный цвет
+green = (0, 255, 0) # Зеленый цвет
+blue = (50, 153, 213) # Синий цвет
 
 # Размеры экрана
-dis_width = 1200
-dis_height = 800
+dis_width = 1200 # Ширина игрового окна
+dis_height = 800  # Высота игрового окна
 
 # Размер блока
 block_size = 10
@@ -35,25 +35,25 @@ font_style = pygame.font.SysFont(None, 70)
 
 
 def our_snake(snake_block, snake_list):
-    """Функция для отображения змейки на экране."""
+    #Функция для отображения змейки на экране
     for x in snake_list:
         pygame.draw.rect(dis, black, [x[0], x[1], snake_block, snake_block])
 
 
 def message(msg, color):
-    """Функция для вывода сообщения на экран."""
+    #Функция для вывода сообщения на экран.
     mesg = font_style.render(msg, True, color)
     dis.blit(mesg, [dis_width / 6, dis_height / 3])
 
 
 def your_score(score):
-    """Функция для отображения счета на экране."""
+    #Функция для отображения счета на экране.
     value = font_style.render("Score:" + str(score), True, black)
     dis.blit(value, [0, 0])
 
 
 def gameLoop():
-    """Основной игровой цикл."""
+    #Основной игровой цикл.
     game_over = False
     game_close = False
 
@@ -80,7 +80,7 @@ def gameLoop():
         while game_close == True:
             # Отображение сообщения о поражении и кнопки Restart? Yes/No
             dis.fill(black)
-            message("You Lost:( Restart? Y-Yes or N-No", white)
+            message("You Lost:( Restart? press Y", white)
             your_score(score)
             pygame.display.update()
 
@@ -127,7 +127,6 @@ def gameLoop():
         elif y1 < 0:
             y1 = dis_height - snake_block
 
-
         # Отображение еды
         pygame.draw.rect(dis, red, [foodx, foody, snake_block, snake_block])
 
@@ -161,7 +160,6 @@ def gameLoop():
             Length_of_snake += 1
             score += 1  # Увеличение счета при съедании еды
 
-
         # Ограничение скорости змейки
         clock.tick(snake_speed)
 
@@ -169,4 +167,4 @@ def gameLoop():
     quit()
 
 
-gameLoop()
+gameLoop()  # Запуск основного игрового цикла.
